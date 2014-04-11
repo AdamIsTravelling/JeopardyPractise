@@ -1,5 +1,6 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.Rectangle;
@@ -44,7 +45,7 @@ public class JeopardyPanel extends JButton {
 		super( content );
 		
 		this.label = content;
-		this.currentFontSize = this.getIdealFontSize(true);
+		this.currentFontSize = this.getIdealFontSize(null, true);
 		this.setFont( new Font( Font.DIALOG, Font.BOLD, this.currentFontSize) );
 		this.setBackground( JeopardyScreen.JEOPARDY_BLUE );
 
@@ -58,12 +59,11 @@ public class JeopardyPanel extends JButton {
 	{
 		this.setFocusPainted(false); // Focus looks uuuuugly
 		
-		
-		this.setFontSize();
+		this.setFontSize( g );
 		//if( ! this.getText().equals(this.label))
 		{
-			int fsize = this.getFontSize();
-			Logger.log("Got font size " + fsize );
+			int fsize = this.getFontSize( g );
+			//Logger.log("Got font size " + fsize );
 			String content = "<html>" +
 		            "<body style='text-align:center;background-color:"+ 
 					JeopardyPanel.backgroundColor +"; width:auto;font-size:"+ fsize+ ";'>" +
@@ -73,22 +73,26 @@ public class JeopardyPanel extends JButton {
 		    
 			this.setText( content );
 		}
-		this.setFontSize();
+		this.setFontSize( g );
 		super.paint( g );
 	}
 	
-	public void setFontSize()
+	public void setFontSize( Graphics g)
 	{
-		int fontSizeToUse = this.getFontSize();
+		int fontSizeToUse = this.getFontSize( g );
 		Font labelFont = this.getFont();
+	
 		this.setFont(new Font(labelFont.getName(), labelFont.getStyle(), fontSizeToUse));
 	}
 	
+	// Okay, for getting font sizes we REALLY need some kind of 
+	// function where we pass the width of the container, alongside the number of characters
+	// and then dal with it from there. But that can be later, for heaven's sake
 	
-	public int getFontSize()
+	public int getFontSize( Graphics g )
 	{
-		int fontSizeToUse = this.getIdealFontSize( false );
-		Logger.log("Trying to Return font size " + fontSizeToUse);
+		int fontSizeToUse = this.getIdealFontSize( g, false );
+		// Logger.log("Trying to Return font size " + fontSizeToUse);
 		
 		if( fontSizeToUse <= this.currentFontSize + 2 && 
 				fontSizeToUse >= this.currentFontSize - 2)
@@ -109,40 +113,23 @@ public class JeopardyPanel extends JButton {
 	}
 	
 	// We want to return the font size that will 
-	public int getIdealFontSize( boolean initial )
+	public int getIdealFontSize( Graphics g, boolean initial )
 	{
-		int idealFontSize = 16;
+		int idealFontSize = 14;
 
 		if( initial)
-			return idealFontSize;
-		// Ideal font size is like, 18 characters per line
-		
-		Font labelFont = this.getFont();
-		String labelText = this.getText();
+				return idealFontSize;
 
 		//int stringWidth = this.getFontMetrics(labelFont).stringWidth(labelText) *2 + 1;
 		int componentWidth = this.getWidth();
-		int stringWidth = componentWidth - 10;
 
-		Logger.log( "IdealFontSize: Current font size "+ labelFont.getSize() );  
-		Logger.log( "IdealFontSize: Component Width "+ componentWidth + " stringWidth " + stringWidth);  
+		// Ideal font size is like, 18 characters per line
+		int newFontSize = componentWidth / 18;
+		int componentHeight = (this.getHeight() / 5);
 		
-		// Find out how much the font can grow in width - who cares? Right?
-		double widthRatio = (double)componentWidth / (double)stringWidth;
-		
-		
-		Logger.log( "IdealFontSize: widthRatio " + widthRatio); 
-		
-		int newFontSize = (int)(labelFont.getSize() * widthRatio);
-		newFontSize = (int) widthRatio;
-		int componentHeight = this.getHeight();
-		newFontSize = componentWidth / 20;
-		
+		//Logger.log( "newFontSize " + newFontSize + " component Height " + componentHeight);
 		// Pick a new font size so it will not be larger than the height of label.
 		idealFontSize = Math.min(newFontSize, componentHeight);
-		
-		// so it looks like component height can be the limiter
-		Logger.log( "IdealFontSize: Smaller of "+ newFontSize + " and " + componentHeight );
 		
 		return idealFontSize;
 	}

@@ -82,7 +82,7 @@ public class Controller {
     	// TODO ignore this guy down the road
 	
     	//this.contentPane.add( this.singleJeopardy.getScreen(), new Integer( 100 ));
-    	this.attemptToStartGame();
+    	// this.attemptToStartGame();
     	//this.window.add( this.singleJeopardy.getScreen());
     	//this.window.add( this.contentPane, BorderLayout.CENTER );
     	
