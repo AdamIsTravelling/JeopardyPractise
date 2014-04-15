@@ -44,12 +44,6 @@ public class MainMenu extends ScreenParent {
 		this.getLastGamePlayedID();
 		this.updateNextGameToPlayID();
 		
-		//NumberFormat nf = NumberFormat.getIntegerInstance();
-		
-		//this.gameNumberEntry = new JFormattedTextField(nf );
-		//this.gameNumberEntry.setPreferredSize( new Dimension( 55, 25 ) );
-		//this.gameNumberEntry.setValue( 2 );
-		
 		this.gameNumberEntry = new JTextField( this.nextGameToBePlayedID.toString(), 5);
 		
 		this.initInputPanel();
@@ -60,7 +54,6 @@ public class MainMenu extends ScreenParent {
 		this.jpanel.setLayout( layout );
 		
 		// These are the parts that will let manually enter the game number
-
 		this.jpanel.add( this.inputPanel );
 		this.jpanel.add( this.messagePanel );
 	}
@@ -151,7 +144,6 @@ public class MainMenu extends ScreenParent {
 		  @Override
 		  public void actionPerformed(ActionEvent e)
 		  {
-			  // So you can do this, eh? Swag
 			  // the controller will  check for validity, etc.
 			  String boxText = MainMenu.this.gameNumberEntry.getText();
 			  try {
