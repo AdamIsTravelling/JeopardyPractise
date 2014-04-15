@@ -70,4 +70,37 @@ public class Database
 		}
 		return rs;
 	}
+	
+	public static boolean runUpdate( String query )
+	{
+		Statement statement = null;
+		boolean retval = false;
+		Logger.log( "Running update - " + query );
+		try
+		{
+			statement = Database.conn.createStatement();
+			statement.execute( query );
+		}
+		catch (SQLException e)
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally
+		{
+			if (statement != null)
+			{
+				try
+				{
+					statement.close();
+				} 
+				catch (SQLException e)
+				{
+					Logger.log( "Exception! Couldn't close update statement");
+				}
+			}
+		}
+		
+		return true;
+	}
 }
