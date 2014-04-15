@@ -142,7 +142,9 @@ public class MainMenu extends ScreenParent {
 		
 		this.inputPanel.add( this.gameNumberEntry);
 		this.inputPanel.add( this.startButton);
-	
+
+		this.inputPanel.setMaximumSize( this.inputPanel.getPreferredSize() );
+		
 	}
 	
 	protected void initMessagePanel()
@@ -155,6 +157,7 @@ public class MainMenu extends ScreenParent {
 		
 		
 		this.messagePanel.add( this.errorField);
+		this.messagePanel.setMaximumSize( this.messagePanel.getPreferredSize() );
 	}
 	
 	protected void initInfoPanel()
@@ -166,12 +169,14 @@ public class MainMenu extends ScreenParent {
 		info.setForeground( Color.WHITE );
 		
 		this.infoPanel.add(info);
+		this.infoPanel.setMaximumSize( this.infoPanel.getPreferredSize() );
 	}
 	
 	public void displayErrorText( String text )
 	{
 		this.errorText = text;
 		this.errorField.setText( text );
+		this.messagePanel.setMaximumSize( this.messagePanel.getPreferredSize() );
 	}
 	
 	public void clearErrorText()
@@ -179,6 +184,7 @@ public class MainMenu extends ScreenParent {
 		this.errorText = "";
 		this.errorField.setText("");
 		
+		this.messagePanel.setMaximumSize( this.messagePanel.getPreferredSize() );
 	}
 	
 	// jacked this from a website - long and short it is a nested class to help
