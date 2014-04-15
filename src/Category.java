@@ -10,6 +10,7 @@ public class Category
 {
 	protected int id; // the primary key of the categorytable
 	protected String name;
+	protected Integer questionsInRound;
 	protected RoundType type = RoundType.SINGLE;
 	protected boolean isOldGame = false;
 	
@@ -26,6 +27,7 @@ public class Category
 	{
 		this.name = name;
 		this.id = id;
+		this.questionsInRound = 0;
 		this.type = type;
 		
 		Logger.log ( "Creating new Category - " + name);
@@ -61,8 +63,9 @@ public class Category
 		{
 			while( results.next() )
 			{
-
+				
 				Clue tmp = new Clue( results );
+				this.questionsInRound++;
 				if( !tmp.isDailyDouble )
 				{
 					int clueIndex = this.clueValues.indexOf( tmp.value );
@@ -101,6 +104,11 @@ public class Category
 		}
 	}
 
+	public Integer getQuestionsInRound()
+	{
+		return this.questionsInRound;
+	}
+	
 	public void printOut()
 	{
 		Logger.log( "Category - "+ this.name );

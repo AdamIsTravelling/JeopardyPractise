@@ -21,6 +21,9 @@ public class Controller {
 	protected JeopardyScreen singleJeopardy = null;
 	protected JeopardyScreen doubleJeopardy = null;
 	
+	protected Game currentGame = null;
+	protected Round currentRound = null;
+	
 	// 1 - first off, this is called by Jeopardy Practise
 	Controller(String title) 
     { 
@@ -55,11 +58,8 @@ public class Controller {
 	
 	protected void initMenu()
 	{
-		
 		Logger.log( "Initiating Menu Screen...");
 		this.menu = new MainMenu( this );
-		this.menu = new MainMenu( this );
-		
 		Logger.log( "Done");
 	}
 
@@ -73,12 +73,12 @@ public class Controller {
 	protected void initDoubleJeopardyScreen( Game game)
 	{
 		Logger.log( "Initiating Double Jeopardy Screen...");
-		//this.doubleJeopardy = new JeopardyScreen( this, game.getDoubleJeopardy() );
+		this.doubleJeopardy = new JeopardyScreen( this, game.getDoubleJeopardy() );
 		Logger.log( "Done");
 	}
 	
 	
-	// 3 this is called after initialization. It displays the main menu
+	// 3 - this is called after initialization. It displays the main menu
     public void gunIt(  )
     {
     	// Some main menu bs
@@ -107,19 +107,13 @@ public class Controller {
 		}
 
 		// First, build the game object
-		Game gameToPlay = new Game( gameID.intValue() );
+		this.currentGame = new Game( gameID.intValue() );
 		
 		// Then, ask if it is a valid game
 	
-		// Ini
-		this.initSingleJeopardyScreen( gameToPlay );
-		//this.initDoubleJeopardyScreen( gameToPlay );
+		//Start Single Jeopardy!
+		this.startSingleJeopardy();
 		
-		// Dismiss the main menu
-		this.dismissMainMenu();
-		
-		// then, start the fucker!
-		this.startGame( gameToPlay );
 	}
 	
 	protected boolean checkGameID( Integer gameID )
@@ -160,30 +154,123 @@ public class Controller {
 	}
 	
 	
-	protected void startGame( Game game )
+	protected void startSingleJeopardy()
 	{
-		Logger.log( "Starting game #" + game.jArchiveID );
-    	
-    	this.window.remove( this.menu.getScreen() );
+		Logger.log( "Starting single Jeopardy for game #" + this.currentGame.jArchiveID );
+		// Initiate the jeopardy Screen
+		this.initSingleJeopardyScreen( this.currentGame );
+		//this.initDoubleJeopardyScreen( gameToPlay );
+		
+		this.currentRound = this.currentGame.singleJ;
+				
+		// Dismiss the main menu
+		this.dismissMainMenu();
+			
+		// add the single jeopardy game
+		this.showSingleJeopardy();
+		//this.window.remove( this.menu.getScreen() );
 		//System.exit( 0 ); // TODO get rid of this guy
+	}
+	
+
+	
+	// 
+	protected void startDoubleJeopardy()
+	{
+		Logger.log( "Starting double jeopardy");
+		this.initDoubleJeopardyScreen( this.currentGame );
+		this.currentRound = this.currentGame.doubleJ;
+		
+		this.dismissSingleJeopardy();
+		this.showDoubleJeopardy();
+		
+	}
+	
+	// gets information from the JeopardyScreen
+	public void clueRevealed()
+	{
+		this.currentRound.clueRevealed();
+		
+		if( this.currentRound.allCluesRevealed())
+		{
+			Logger.log( "Round complete!"); 
+			
+			this.startNextRound();
+		}
+	}
+	
+	protected void startNextRound()
+	{
+	
+		this.startDoubleJeopardy();
+		
+	}
+	
+	// clean up all the shit
+	public void endGame()
+	{
+		
+		
 	}
 	
     // TELL THE VIEWS WHAT TO DO
     protected void dismissMainMenu()
     {
-    	if( this.menu == null )
-    		return;
-    	
-    	Logger.log( "Controller dismissMainMenu()");
-    	
-    	this.window.remove( this.menu.getScreen() );
-    	
-    	this.window.add( this.singleJeopardy.getScreen() );
-    	this.window.revalidate();
-    	this.window.repaint();
+    	this.dismissScreen( this.menu );
     }
     
-    protected void menuDisplayErrorText( String errorText )
+	protected void dismissSingleJeopardy()
+	{
+		this.dismissScreen( this.singleJeopardy );
+	}
+    
+	// take the Double Jeopardy screen off the main panel
+	protected void dismissDoubleJeopardy()
+	{
+		this.dismissScreen( this.doubleJeopardy );
+	}
+	
+	protected void dismissScreen( ScreenParent obj )
+	{
+	 	Logger.log( "Controller dismiss Screen(" +obj.getClass() + ")" );
+		if( obj == null )
+    		return;
+    	
+    	
+    	this.window.remove( obj.getScreen() );
+    	
+    	this.window.revalidate();
+    	this.window.repaint();
+	}
+	
+	protected void showMenu()
+	{
+		this.showScreen(this.menu);
+	}
+	
+	protected void showSingleJeopardy()
+	{
+		this.showScreen(this.singleJeopardy);
+	}
+    
+	protected void showDoubleJeopardy()
+	{
+		this.showScreen( this.doubleJeopardy);
+	}
+	
+	protected void showScreen( ScreenParent obj )
+	{
+		Logger.log( "Controller show Screen(" +obj.getClass() + ")" );
+	
+		if( obj == null )
+			return;
+		
+		this.window.add( obj.getScreen() );
+    	this.window.revalidate();
+    	this.window.repaint();
+	}
+	
+	protected void menuDisplayErrorText( String errorText )
     {
     	this.menu.displayErrorText( errorText );
     

@@ -1,6 +1,7 @@
 import java.awt.event.ActionEvent;
 
 import javax.swing.*;
+
 import java.awt.*;
 
 // Basically a JButton that, when clicked, will show a Full screen JButton 
@@ -19,6 +20,7 @@ public class CluePanel extends JeopardyPanel
 	protected boolean clueHasBeenDisplayed = false;
 	protected boolean answerHasBeenDisplayed = false;
 	
+	protected JeopardyScreen parent = null; 
 	
 	// When the button goes full screen, it is done pretty brutally by just replacing the content pane. 
 	// To go back to the previous screen, we replace it with the "Old" content pane, which more or less had the games visual state
@@ -29,7 +31,7 @@ public class CluePanel extends JeopardyPanel
 	{
 		CluePanel cloned = new CluePanel( this.label, this.clue, this.answerText, 
 											this.isDailyDouble, this.dailyDoubleWagerScreenShown, 
-											this.clueHasBeenDisplayed, this.answerHasBeenDisplayed, this.isFullScreen);
+											this.clueHasBeenDisplayed, this.answerHasBeenDisplayed, this.isFullScreen, this.parent);
 			
 		return cloned;
 	}
@@ -37,7 +39,8 @@ public class CluePanel extends JeopardyPanel
 	// The only constructor I'm going to care about for now
 	public CluePanel( String amount, String clue, String answer, boolean isDailyDouble, 
 							boolean dailyDoubleWagerScreenShown, boolean clueHasBeenDisplayed,
-							boolean answerHasBeenDisplayed , boolean isFullScreen) 
+							boolean answerHasBeenDisplayed , boolean isFullScreen,
+							JeopardyScreen parent) 
 	{
 		super( amount );
 		
@@ -50,15 +53,17 @@ public class CluePanel extends JeopardyPanel
 		this.clueHasBeenDisplayed = clueHasBeenDisplayed;
 		this.answerHasBeenDisplayed = answerHasBeenDisplayed;
 		this.isFullScreen = isFullScreen;
+		this.parent = parent;
 		
 		// This does almost all of the heavy lifting
 		this.addActionListener( new CluePaneAction( "Whatever"));
 	}
 	
-	public CluePanel( Clue clue )
+	public CluePanel( Clue clue, JeopardyScreen parent )
 	{
 		super(  clue.isNull() ? "" : String.valueOf(clue.value) );
-		Logger.log( "a new cluePANEL" );
+	
+		this.parent = parent;
 		if( clue.getClass().getName() == "NullClue")
 		{
 			Logger.log( "But it is a null Clue!" );
@@ -73,6 +78,7 @@ public class CluePanel extends JeopardyPanel
 			this.answerText = clue.answer;
 			this.isDailyDouble = clue.isDailyDouble;
 			
+			Logger.log( "new clue " + clue.value + " w/Parent " + this.parent);
 			this.addActionListener( new CluePaneAction( this.answerText ));
 		}
 		
@@ -93,6 +99,11 @@ public class CluePanel extends JeopardyPanel
 		this.previousContentPane = previousPane;
 	}
 	
+	public void clueRevealed()
+	{
+		// once the clue has been answered, indicate to the Jeopardy Screen that this clue has been, well, answered.
+		this.parent.clueRevealed();
+	}
 	
 	// OK. This private class handles the clicks
 	@SuppressWarnings("serial")
@@ -127,11 +138,8 @@ public class CluePanel extends JeopardyPanel
 			{ 
 				CluePanel.this.clueHasBeenDisplayed = true;
 
-				Logger.log( "GO FullScreen with this text - " + CluePanel.this.label);
-				Logger.log( "GO FullScreen with this text - " + CluePanel.this.clueText);
 				CluePanel.this.label = CluePanel.this.clueText;
-				Logger.log( "WENT FullScreen with this text - " + CluePanel.this.label);
-				Logger.log( "WENT FullScreen with this text - " + CluePanel.this.clueText);
+			
 				// It may already be fullscreen, of course
 				if( ! CluePanel.this.isFullScreen)
 					this.goFullScreen();
@@ -147,6 +155,7 @@ public class CluePanel extends JeopardyPanel
 			else 
 			{
 				this.backToJeopardyBoard();
+				CluePanel.this.clueRevealed();
 			}
 		} 
 		  

@@ -15,6 +15,8 @@ public class Game
 	protected Round doubleJ;
 	protected Round finalJ;
 	
+	protected Round currentRound;
+	
 	protected boolean isValidGame = true;
 	protected String isInvalidBecause = "";
 	
@@ -49,12 +51,18 @@ public class Game
 		if( this.isValidGame)
 		{
 			// then I guess we can start by constructing this game. First, grab the categories
+			
 			this.singleJ.loadRound(this.id, this.jArchiveID );
 			
+			this.doubleJ.loadRound( this.id, this.jArchiveID);
 		}
 		
 	}
 	
+	public void setIsSingleJeopardy()
+	{
+		this.currentRound = this.doubleJ;
+	}
 	
 	public Round getSingleJeopardy()
 	{

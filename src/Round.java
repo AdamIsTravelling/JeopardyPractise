@@ -10,12 +10,16 @@ public class Round
 {
 	protected RoundType type = RoundType.SINGLE;
 	protected int roundTypeInt = -1;
+	
+	protected Integer cluesInRound = 0;
+	protected Integer cluesRemainingInRound = 0;
 //	protected int gameJArchiveID;
 	
 	protected List<Category> categories;
 	
 	public Round( RoundType roundType )
 	{
+		
 		this.type = roundType;
 		// The person who wrote the script to get the data dump made some fairly suspect decisions
 		switch( this.type )
@@ -64,12 +68,23 @@ public class Round
 		// Then, for each category, load the questions
 		for (Category c : this.categories) {
 	        c.getClues( gameID );
+	        this.cluesInRound += c.questionsInRound;
 	        c.printOut();
 	    } 
+		
+		this.cluesRemainingInRound = this.cluesInRound;
+		Logger.log( "Round loaded. there are " + this.cluesInRound + " questions in this round");
 
-		// Then, for each category, load the questions
-		for (Category c : this.categories) {
-			c.printOut();
-	    } 
+	}
+	
+	public void clueRevealed()
+	{
+		this.cluesRemainingInRound--;
+		Logger.log( "There are currently " + this.cluesRemainingInRound + " clues remaining in this round" );
+	}
+	
+	public boolean allCluesRevealed()
+	{
+		return (this.cluesRemainingInRound == 0);
 	}
 }

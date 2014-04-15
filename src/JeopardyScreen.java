@@ -71,10 +71,16 @@ public class JeopardyScreen extends ScreenParent {
 			for( int col = 0 ; col < 6 ; col ++ )
 			{
 				Clue tmp = this.round.categories.get( col ).clues.get( row ); 
-				this.jpanel.add( new CluePanel( tmp ));
-				Logger.log( "Added clue " + tmp.value);
+				this.jpanel.add( new CluePanel( tmp, this));
 			}
 		}
+	}
+	
+	// When a clue has been 
+	public void clueRevealed()
+	{
+		
+		this.controller.clueRevealed();
 	}
 		
 }
