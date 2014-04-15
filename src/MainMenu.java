@@ -18,6 +18,7 @@ public class MainMenu extends ScreenParent {
 	
 	protected JPanel inputPanel;
 	protected JPanel messagePanel;
+	protected JPanel infoPanel; 
 	
 	protected JTextField gameNumberEntry;
 	protected JButton startButton;
@@ -48,6 +49,7 @@ public class MainMenu extends ScreenParent {
 		
 		this.initInputPanel();
 		this.initMessagePanel();
+		this.initInfoPanel();
 		
 		// we want a box layout!
 		BoxLayout layout = new BoxLayout(this.jpanel, BoxLayout.Y_AXIS);
@@ -56,10 +58,11 @@ public class MainMenu extends ScreenParent {
 		// These are the parts that will let manually enter the game number
 		this.jpanel.add( this.inputPanel );
 		this.jpanel.add( this.messagePanel );
+		this.jpanel.add(this.infoPanel);
 	}
 	
 	protected void getLastGamePlayedID()
-	{
+	{		
 		String query = "SELECT ConstantValue FROM jeopardy.values WHERE ConstantName LIKE 'LastGameID'"; 
 		ResultSet results = Database.runQuery( query );
 
@@ -98,6 +101,40 @@ public class MainMenu extends ScreenParent {
 		}
 	}
 	
+	protected String getLastGamePlayedInfoString()
+	{
+		String retval = "";
+		// Maybe we just haven't tried to get the last game played
+		if( this.lastGamePlayedID.intValue() == 0)
+			this.getLastGamePlayedID();
+		// Haha Okay it is legitimately 0 now
+		if ( this.lastGamePlayedID.intValue() == 0)
+			return "Congrats, it is your first game! I hope you have fun";;
+		
+		retval += "The last game you played was game #" + this.lastGamePlayedID;
+		
+		String query = "SELECT * FROM game WHERE jarchiveID = " + this.lastGamePlayedID.toString() + " LIMIT 0,1"; 
+		ResultSet results = Database.runQuery( query );
+
+		try
+		{
+			while( results.next() )
+			{
+				retval += " (aired ";
+				retval += results.getString("playDate");
+				retval += ")";
+				
+			}
+		}
+		catch (SQLException e)
+		{
+			Logger.log("MainMenu::getLastGamePlayedInfoString() SQL Error " + e.toString() );
+			
+		}
+		
+		return retval;
+	}
+	
 	protected void initInputPanel()
 	{
 		this.inputPanel = new JPanel( new FlowLayout() );
@@ -115,7 +152,20 @@ public class MainMenu extends ScreenParent {
 		
 		this.errorField = new JLabel( "" );
 		this.errorField.setForeground( Color.RED );
+		
+		
 		this.messagePanel.add( this.errorField);
+	}
+	
+	protected void initInfoPanel()
+	{
+		this.infoPanel = new JPanel( new FlowLayout() );
+		this.infoPanel.setBackground( this.backgroundColor );
+		JLabel info = new JLabel( this.getLastGamePlayedInfoString() );
+
+		info.setForeground( Color.WHITE );
+		
+		this.infoPanel.add(info);
 	}
 	
 	public void displayErrorText( String text )
