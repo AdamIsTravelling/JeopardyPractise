@@ -4,6 +4,8 @@ import javax.swing.text.NumberFormatter;
 
 import java.awt.*; 
 import java.awt.event.*; 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 
@@ -11,7 +13,8 @@ public class MainMenu extends ScreenParent {
 
 	
 	protected int gameID; // this will be the "Jeopardy Archive ID" i.e. jarchiveID in the game table
-	protected int lastGamePlayedID; // see above
+	protected Integer lastGamePlayedID = 0; // Likewise
+	protected Integer nextGameToBePlayedID = 0;
 	
 	protected JPanel inputPanel;
 	protected JPanel messagePanel;
@@ -22,6 +25,7 @@ public class MainMenu extends ScreenParent {
 	// a simple field to display any errors that may occur
 	protected JLabel errorField;
 	protected String errorText;
+	
 	
 	public MainMenu()
 	{
@@ -37,13 +41,16 @@ public class MainMenu extends ScreenParent {
 		this.startButton = new JButton( "Click Here To Get Started" );
 		this.startButton.addActionListener(  new StartButtonAction( "Action" ) );
 		
+		this.getLastGamePlayedID();
+		this.updateNextGameToPlayID();
+		
 		//NumberFormat nf = NumberFormat.getIntegerInstance();
 		
 		//this.gameNumberEntry = new JFormattedTextField(nf );
 		//this.gameNumberEntry.setPreferredSize( new Dimension( 55, 25 ) );
 		//this.gameNumberEntry.setValue( 2 );
 		
-		this.gameNumberEntry = new JTextField( "2", 5);
+		this.gameNumberEntry = new JTextField( this.nextGameToBePlayedID.toString(), 5);
 		
 		this.initInputPanel();
 		this.initMessagePanel();
@@ -56,6 +63,46 @@ public class MainMenu extends ScreenParent {
 
 		this.jpanel.add( this.inputPanel );
 		this.jpanel.add( this.messagePanel );
+	}
+	
+	protected void getLastGamePlayedID()
+	{
+		String query = "SELECT ConstantValue FROM jeopardy.values WHERE ConstantName LIKE 'LastGameID'"; 
+		ResultSet results = Database.runQuery( query );
+
+		try
+		{
+			while( results.next() )
+			{
+				this.lastGamePlayedID = results.getInt("ConstantValue");
+			}
+		}
+		catch (SQLException e)
+		{
+			Logger.log("MainMenu::getLastGamePlayedID() SQL Error " + e.toString() );
+			this.lastGamePlayedID = new Integer(0);
+		}
+	}
+				
+	
+	
+	protected void updateNextGameToPlayID()
+	{
+		String query = "SELECT jarchiveID FROM game WHERE jarchiveID > " + this.lastGamePlayedID.toString() + " ORDER BY jarchiveID ASC LIMIT 0,1"; 
+		ResultSet results = Database.runQuery( query );
+
+		try
+		{
+			while( results.next() )
+			{
+				this.nextGameToBePlayedID = results.getInt("jarchiveID");
+			}
+		}
+		catch (SQLException e)
+		{
+			Logger.log("MainMenu::updateNextGameToPlayID() SQL Error " + e.toString() );
+			this.nextGameToBePlayedID = new Integer(1); // start at the beginning
+		}
 	}
 	
 	protected void initInputPanel()

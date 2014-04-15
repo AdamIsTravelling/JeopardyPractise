@@ -24,9 +24,11 @@ public class Controller {
 	protected Game currentGame = null;
 	protected Round currentRound = null;
 	
+	
 	// 1 - first off, this is called by Jeopardy Practise
 	Controller(String title) 
     { 
+		
 		Logger.log( "New Controller(" + title + ") " + this );
 		this.jepTitle = title;
 		Database.initDB();
@@ -172,8 +174,6 @@ public class Controller {
 		//System.exit( 0 ); // TODO get rid of this guy
 	}
 	
-
-	
 	// 
 	protected void startDoubleJeopardy()
 	{
@@ -210,7 +210,18 @@ public class Controller {
 	}
 	
 	// clean up all the shit
-	public void endGame()
+	protected void endGame()
+	{
+		// update last completed game
+		this.updateLastCompletedGame( this.currentGame.jArchiveID );
+
+		this.dismissAll();
+		this.reset();
+		
+		this.showMenu();
+	}
+	
+	protected void reset()
 	{
 		// clear up the existing game information
 		this.singleJeopardy = null;
@@ -219,8 +230,17 @@ public class Controller {
 		this.currentGame = null;
 		this.currentRound = null;
 		
-		this.dismissAll();
-		this.showMenu();
+		// reset the menu
+		this.menu = null;
+		this.initMenu();
+		
+	}
+	
+	
+	protected void updateLastCompletedGame( int completedGameID )
+	{
+		String query = "UPDATE jeopardy.values SET ConstantValue = '" + completedGameID + "' WHERE ConstantName='LastGameID'";
+		Database.runUpdate( query );
 	}
 	
     // TELL THE VIEWS WHAT TO DO
