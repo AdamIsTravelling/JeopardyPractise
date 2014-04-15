@@ -201,16 +201,26 @@ public class Controller {
 	
 	protected void startNextRound()
 	{
-	
-		this.startDoubleJeopardy();
-		
+		if( this.currentRound == this.currentGame.singleJ )
+			this.startDoubleJeopardy();
+		else if( this.currentRound == this.currentGame.doubleJ )
+			this.endGame();
+		else
+			this.endGame();
 	}
 	
 	// clean up all the shit
 	public void endGame()
 	{
+		// clear up the existing game information
+		this.singleJeopardy = null;
+		this.doubleJeopardy = null;
 		
+		this.currentGame = null;
+		this.currentRound = null;
 		
+		this.dismissAll();
+		this.showMenu();
 	}
 	
     // TELL THE VIEWS WHAT TO DO
@@ -228,6 +238,13 @@ public class Controller {
 	protected void dismissDoubleJeopardy()
 	{
 		this.dismissScreen( this.doubleJeopardy );
+	}
+	
+	protected void dismissAll()
+	{
+		this.dismissMainMenu();
+		this.dismissSingleJeopardy();
+		this.dismissDoubleJeopardy();
 	}
 	
 	protected void dismissScreen( ScreenParent obj )
