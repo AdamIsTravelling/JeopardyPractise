@@ -52,8 +52,8 @@ public class Controller {
         this.window.setSize(500,500); 
 
         // Uncomment this for fullscreen radness
-        //this.window.setUndecorated(true);
-        //this.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        this.window.setUndecorated(true);
+        this.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
         
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        
@@ -91,16 +91,7 @@ public class Controller {
     public void gunIt(  )
     {
     	// Some main menu bs
-    	this.window.add( this.menu.getScreen() );
-    	
-    	// TODO ignore this guy down the road
-	
-    	// Below is stuff that we can do IF we want to rush directly to a 
-    	//this.contentPane.add( this.singleJeopardy.getScreen(), new Integer( 100 ));
-    	// this.attemptToStartGame();
-    	//this.window.add( this.singleJeopardy.getScreen());
-    	//this.window.add( this.contentPane, BorderLayout.CENTER );
-    	
+    	this.window.add( this.menu.getScreen() );  	
     	this.window.setVisible(true);
     }
 	
@@ -177,8 +168,6 @@ public class Controller {
 			
 		// add the single jeopardy game
 		this.showSingleJeopardy();
-		//this.window.remove( this.menu.getScreen() );
-		//System.exit( 0 ); // TODO get rid of this guy
 	}
 	
 	// 
