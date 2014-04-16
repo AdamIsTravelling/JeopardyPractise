@@ -50,6 +50,8 @@ public class JeopardyPanel extends JButton {
 		this.setBackground( JeopardyScreen.JEOPARDY_BLUE );
 
 		this.setForeground( this.textColor );
+		if( content == "")
+			this.setEnabled( false);
 	}
 
 	// a custom paint method that basically looks for the ideally sized font

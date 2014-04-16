@@ -35,7 +35,6 @@ public class CategoryTitle extends JeopardyPanel {
 		super( title );
 		this.textColor = Color.YELLOW;
 		this.setForeground( this.textColor );
-		//this.setEnabled( false );
 		
 		this.revalidate();
 		this.repaint();
