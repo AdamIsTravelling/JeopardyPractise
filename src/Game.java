@@ -54,7 +54,8 @@ public class Game
 			
 			this.singleJ.loadRound(this.id, this.jArchiveID );
 			
-			this.doubleJ.loadRound( this.id, this.jArchiveID);
+			this.doubleJ.loadRound( this.id, this.jArchiveID );
+			this.finalJ.loadRound( this.id,  this.jArchiveID );
 		}
 		
 	}

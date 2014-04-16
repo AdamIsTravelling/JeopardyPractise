@@ -22,6 +22,7 @@ public class Category
 	protected List<Clue> clues;
 	
 	protected Clue dailyDoubleHolder = null;
+	protected Clue finalJeopardyClue = null; //bad form. Whatever. Bite me.
 	
 	public Category( int id, String name, RoundType type, boolean isOldGame)
 	{
@@ -54,7 +55,6 @@ public class Category
 			this.clues.add( new NullClue( val ) );
 		}
 		
-		
 		String query = "SELECT * FROM jeopardy.clue WHERE game = '" + gameID + 
 				"' AND category = '" + this.id + "' ORDER BY value ASC" ; 
 		ResultSet results = Database.runQuery( query );
@@ -63,13 +63,18 @@ public class Category
 		{
 			while( results.next() )
 			{
+				boolean isFJClue = (results.getInt("pickIndex") == -1);
 				
 				Clue tmp = new Clue( results );
 				this.questionsInRound++;
-				if( !tmp.isDailyDouble )
+				if( !tmp.isDailyDouble && !isFJClue)
 				{
 					int clueIndex = this.clueValues.indexOf( tmp.value );
 					this.clues.set(clueIndex, tmp);
+				}
+				else if (isFJClue)
+				{
+					this.finalJeopardyClue = tmp;
 				}
 				else
 				{
@@ -112,9 +117,14 @@ public class Category
 	public void printOut()
 	{
 		Logger.log( "Category - "+ this.name );
-		for (Clue c : this.clues) {
-			Logger.log( "	" + c.toString() );
-		}
 		
+		if( this.finalJeopardyClue == null )
+		{
+			for (Clue c : this.clues) {
+				Logger.log( "	" + c.toString() );
+			}
+		}
+		else
+			Logger.log( this.finalJeopardyClue.toString() );
 	}
 }

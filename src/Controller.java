@@ -16,14 +16,15 @@ public class Controller {
 	private JFrame window;
 	private JLayeredPane contentPane;
 	protected String jepTitle; // If there is a title to be had. 
-	
+		
 	protected MainMenu menu = null; 
 	protected JeopardyScreen singleJeopardy = null;
 	protected JeopardyScreen doubleJeopardy = null;
+	protected FinalJeopardyScreen finalJeopardy = null;
 	
 	protected Game currentGame = null;
 	protected Round currentRound = null;
-	
+	protected ScreenParent currentScreen = null;
 	
 	// 1 - first off, this is called by Jeopardy Practise
 	Controller(String title) 
@@ -72,13 +73,19 @@ public class Controller {
 		Logger.log( "Done");
 	}
 
-	protected void initDoubleJeopardyScreen( Game game)
+	protected void initDoubleJeopardyScreen( Game game )
 	{
 		Logger.log( "Initiating Double Jeopardy Screen...");
 		this.doubleJeopardy = new JeopardyScreen( this, game.getDoubleJeopardy() );
 		Logger.log( "Done");
 	}
 	
+	protected void initFinalJeopardyScreen( Game game )
+	{
+		Logger.log( "Initiating Final Jeopardy Screen...");
+		this.finalJeopardy = new FinalJeopardyScreen( this, game.getFinalJeopardy() );
+		Logger.log( "Done");
+	}
 	
 	// 3 - this is called after initialization. It displays the main menu
     public void gunIt(  )
@@ -186,6 +193,16 @@ public class Controller {
 		
 	}
 	
+	protected void startFinalJeopardy()
+	{
+		Logger.log( "Starting final Jeopardy");
+		this.initFinalJeopardyScreen( this.currentGame );
+		this.currentRound = this.currentGame.finalJ;
+		
+		this.dismissDoubleJeopardy();
+		this.showFinalJeopardy();
+	}
+	
 	// gets information from the JeopardyScreen
 	public void clueRevealed()
 	{
@@ -204,7 +221,7 @@ public class Controller {
 		if( this.currentRound == this.currentGame.singleJ )
 			this.startDoubleJeopardy();
 		else if( this.currentRound == this.currentGame.doubleJ )
-			this.endGame();
+			this.startFinalJeopardy();
 		else
 			this.endGame();
 	}
@@ -226,6 +243,7 @@ public class Controller {
 		// clear up the existing game information
 		this.singleJeopardy = null;
 		this.doubleJeopardy = null;
+		this.finalJeopardy = null;
 		
 		this.currentGame = null;
 		this.currentRound = null;
@@ -235,7 +253,6 @@ public class Controller {
 		this.initMenu();
 		
 	}
-	
 	
 	protected void updateLastCompletedGame( int completedGameID )
 	{
@@ -260,20 +277,27 @@ public class Controller {
 		this.dismissScreen( this.doubleJeopardy );
 	}
 	
+	protected void dismissFinalJeopardy()
+	{
+		this.dismissScreen( this.finalJeopardy );
+	}
+	
 	protected void dismissAll()
 	{
 		this.dismissMainMenu();
 		this.dismissSingleJeopardy();
 		this.dismissDoubleJeopardy();
+		this.dismissFinalJeopardy();
 	}
 	
 	protected void dismissScreen( ScreenParent obj )
 	{
-	 	Logger.log( "Controller dismiss Screen(" +obj.getClass() + ")" );
 		if( obj == null )
     		return;
-    	
-    	
+		
+	 	Logger.log( "Controller dismiss Screen()" );
+		    	
+		this.currentScreen = null;
     	this.window.remove( obj.getScreen() );
     	
     	this.window.revalidate();
@@ -295,10 +319,17 @@ public class Controller {
 		this.showScreen( this.doubleJeopardy);
 	}
 	
+	protected void showFinalJeopardy()
+	{
+		this.showScreen( this.finalJeopardy );
+		
+	}
+	
 	protected void showScreen( ScreenParent obj )
 	{
 		Logger.log( "Controller show Screen(" +obj.getClass() + ")" );
-	
+
+		this.currentScreen = obj;
 		if( obj == null )
 			return;
 		
