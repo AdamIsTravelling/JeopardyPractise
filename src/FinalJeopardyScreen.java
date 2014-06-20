@@ -19,7 +19,7 @@ public class FinalJeopardyScreen extends ScreenParent
 	protected Category category;
 	protected Clue clue;
 	
-	protected JeopardyPanel mainScreen = null;;
+	protected JeopardyPanel mainScreen = null;
 	
 	protected FinalJeopardyStage stage;
 	

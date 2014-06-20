@@ -39,6 +39,7 @@ public class JeopardyScreen extends ScreenParent {
 		this.clueValues = (true) ? SINGLE_CLUE_VALUES : DOUBLE_CLUE_VALUES;
 		
 		this.setupScreen();
+		
 	}
 	
 	public void setupScreen()

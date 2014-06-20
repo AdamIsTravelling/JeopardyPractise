@@ -22,6 +22,9 @@ public class Controller {
 	protected JeopardyScreen doubleJeopardy = null;
 	protected FinalJeopardyScreen finalJeopardy = null;
 	
+	// a common menu to be used by every screen we've got
+	protected ModalMenu modalMenu = null;
+	
 	protected Game currentGame = null;
 	protected Round currentRound = null;
 	protected ScreenParent currentScreen = null;
@@ -41,7 +44,9 @@ public class Controller {
 		this.initJFrame();
 
 		// Init menu - don't bother initializing the single and double jeopardy games until a game is started
+		this.initModalMenu();
 		this.initMenu();
+		
 	}
 	
 	// INITIALIZATION FUNCTIONS
@@ -52,8 +57,11 @@ public class Controller {
         this.window.setSize(500,500); 
 
         // Uncomment this for fullscreen radness
-        this.window.setUndecorated(true);
-        this.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        if( false )
+        {
+        	this.window.setUndecorated(true);
+        	this.window.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        }
         
         this.window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
        
@@ -66,6 +74,11 @@ public class Controller {
 		Logger.log( "Done");
 	}
 
+	protected void initModalMenu()
+	{
+		this.modalMenu = new ModalMenu();
+	}
+	
 	protected void initSingleJeopardyScreen( Game game )
 	{
 		Logger.log( "Initiating single Jeopardy Screen...");

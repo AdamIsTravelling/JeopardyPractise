@@ -36,7 +36,10 @@ public class MainMenu extends ScreenParent {
 	public MainMenu( Controller controller ) 
 	{
 		super( controller );
+		
 		Logger.log( "New MainMenu(" + this.controller + ") " +  this);
+		
+		this.disableMenu();
 		
 		// Create a start button
 		this.startButton = new JButton( "Click Here To Get Started" );
