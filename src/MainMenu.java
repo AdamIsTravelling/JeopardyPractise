@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.ArrayList;
 
 public class MainMenu extends ScreenParent {
 
@@ -19,6 +20,7 @@ public class MainMenu extends ScreenParent {
 	protected JPanel inputPanel;
 	protected JPanel messagePanel;
 	protected JPanel infoPanel; 
+	protected JPanel gameListPanel;
 	
 	protected JTextField gameNumberEntry;
 	protected JButton startButton;
@@ -26,7 +28,8 @@ public class MainMenu extends ScreenParent {
 	// a simple field to display any errors that may occur
 	protected JLabel errorField;
 	protected String errorText;
-	
+
+	ArrayList<GameInfo> gameList;
 	
 	public MainMenu()
 	{
@@ -53,6 +56,7 @@ public class MainMenu extends ScreenParent {
 		this.initInputPanel();
 		this.initMessagePanel();
 		this.initInfoPanel();
+		this.initGameListPanel();
 		
 		// we want a box layout!
 		BoxLayout layout = new BoxLayout(this.jpanel, BoxLayout.Y_AXIS);
@@ -62,6 +66,7 @@ public class MainMenu extends ScreenParent {
 		this.jpanel.add( this.inputPanel );
 		this.jpanel.add( this.messagePanel );
 		this.jpanel.add(this.infoPanel);
+		this.jpanel.add( this.gameListPanel);
 	}
 	
 	protected void getLastGamePlayedID()
@@ -173,6 +178,48 @@ public class MainMenu extends ScreenParent {
 		
 		this.infoPanel.add(info);
 		this.infoPanel.setMaximumSize( this.infoPanel.getPreferredSize() );
+	}
+	
+	protected void initGameListPanel()
+	{
+		this.gameListPanel = new JPanel( new FlowLayout() );
+		
+		this.initGameList();
+		
+		// This is the list containing the first X games to use 
+		// Will need to contain at least a string to represent the game, as well as a gameID
+		
+		DefaultListModel model = new DefaultListModel();
+		for( int i = 0; i < this.gameList.size() ; i ++)
+		{
+			model.addElement( this.gameList.get(i) );
+			Logger.log("Successfully added a gameID");
+		}
+		
+		//JList<Object> list = new JList<>( this.gameList.toArray() );
+
+		JList<Object> list = new JList<>( model );
+		list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
+		list.setSelectedIndex( 0 );
+		    
+		JScrollPane scroller = new JScrollPane( list );
+		
+		scroller.getViewport().setBackground( this.backgroundColor );
+		scroller.setBorder(BorderFactory.createEmptyBorder());
+		scroller.revalidate();
+		
+		this.gameListPanel.add( scroller);
+		this.gameListPanel.setMaximumSize( this.gameListPanel.getPreferredSize() );
+
+		this.gameListPanel.revalidate();
+	}
+	
+	// Iniitializes the ArrayList of games
+	protected void initGameList()
+	{
+		
+		this.gameList = controller.getGameList();
+		
 	}
 	
 	public void displayErrorText( String text )

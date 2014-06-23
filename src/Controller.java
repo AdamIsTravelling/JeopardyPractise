@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.*; 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 
 // This is the main screen, which handles all the things. 
@@ -346,4 +347,28 @@ public class Controller {
     
     }
     
+	// get a list of games, in a certain range?
+	protected ArrayList<GameInfo> getGameList()
+	{
+		GameInfo tmp = null;
+		ArrayList<GameInfo> gameList = new ArrayList<GameInfo>();
+		
+		String query = "SELECT * FROM jeopardy.game WHERE usedForPractise='N' ORDER BY jarchiveID LIMIT 10";
+		
+		ResultSet results = Database.runQuery( query );
+	
+		try
+		{
+			while( results.next() )
+			{
+				tmp = new GameInfo( results );
+				gameList.add( tmp );
+			}
+		} catch (SQLException e)
+		{
+			Logger.log(e.toString());
+		}
+		
+		return gameList;
+	}
 }
