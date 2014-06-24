@@ -2,5 +2,5 @@ package Tools;
 
 public enum ModalMenuChoice
 {
-	NONE,MAIN, EXIT;
+	NONE,MAIN, MAINANDMARK, EXIT;
 }

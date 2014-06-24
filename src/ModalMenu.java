@@ -15,11 +15,12 @@ public class ModalMenu
 	
 	public ModalMenu()
 	{
-		this.options = new Object[] {"Return to Main Menu",
+		this.options = new Object[] {"Return to Main Menu", "Return and Mark as Complete",
 	        			"Quit Game"};
 		this.optmap = new HashMap();
 		this.optmap.put( 0, ModalMenuChoice.MAIN);
-		this.optmap.put( 1, ModalMenuChoice.EXIT);
+		this.optmap.put( 1, ModalMenuChoice.MAINANDMARK);
+		this.optmap.put( 2, ModalMenuChoice.EXIT);
 		this.optmap.put( -1, ModalMenuChoice.NONE);
 	}
 	

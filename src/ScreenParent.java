@@ -81,6 +81,10 @@ public class ScreenParent {
 						Logger.log( "They want to go to the Main Menu");
 						ScreenParent.this.controller.endGame();
 						break;
+					case MAINANDMARK:
+						Logger.log( "They want to return to the Main Menu AND mark it as having been used");
+						ScreenParent.this.controller.endGame();
+						break;
 					case EXIT:
 						Logger.log( "They want to get the fuck out of here" );
 						System.exit(0);
