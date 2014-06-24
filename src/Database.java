@@ -54,6 +54,7 @@ public class Database
 		return Database.conn;
 	}
 	
+	// TODO: change this so we don't have a ResultSet, but instead some kind of ArrayMap
 	public static ResultSet runQuery( String query )
 	{
 		ResultSet rs = null;
