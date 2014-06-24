@@ -233,8 +233,10 @@ public class Controller {
 	protected void endGame()
 	{
 		// update last completed game
+		this.markGameAsUsedForPractise( this.currentGame.jArchiveID );
 		this.updateLastCompletedGame( this.currentGame.jArchiveID );
 
+		
 		this.dismissAll();
 		this.reset();
 		
@@ -262,6 +264,13 @@ public class Controller {
 		String query = "UPDATE jeopardy.values SET ConstantValue = '" + completedGameID + "' WHERE ConstantName='LastGameID'";
 		Database.runUpdate( query );
 	}
+	
+	protected void markGameAsUsedForPractise( int completedJarchiveGameID )
+	{
+		String query = "UPDATE jeopardy.game SET usedForPractise = 'Y' WHERE jarchiveID = '" + completedJarchiveGameID + "'";
+		Database.runUpdate( query );
+	}
+	
 	
     // TELL THE VIEWS WHAT TO DO
     protected void dismissMainMenu()
