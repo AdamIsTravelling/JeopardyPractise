@@ -14,6 +14,12 @@ public class GameInfo
 {
 	protected Integer gameID;
 	protected Integer jArchiveID;
+	protected String playerOne;
+	protected String playerTwo;
+	protected String playerThree;
+	
+	// The separator for the platers
+	protected String playerSep = "/";
 	
 	protected boolean played; 
 	
@@ -24,6 +30,7 @@ public class GameInfo
 		this.gameLabel = "Game #5!";
 		this.gameID = new Integer(6);
 		
+		this.playerOne = this.playerTwo = this.playerThree = "";
 	}
 	
 	public GameInfo( ResultSet r ) throws SQLException
@@ -31,12 +38,37 @@ public class GameInfo
 		this.gameID = r.getInt( "id" );
 		this.jArchiveID = r.getInt("jarchiveID");
 
-		this.gameLabel = "Episode #" + this.jArchiveID + ": "+ r.getString( "playDate") ;
+		this.playerOne = this.getPlayerFromID( r.getInt("firstPlayer") );
+		this.playerTwo = this.getPlayerFromID( r.getInt("secondPlayer") );
+		this.playerThree = this.getPlayerFromID( r.getInt("thirdPlayer") );
 		
+		this.gameLabel = "Episode #" + this.jArchiveID + ": "+ r.getString( "playDate") ;
+		this.gameLabel += " (" + playerOne + playerSep + playerTwo + playerSep + playerThree + ")"  ;
 	}
 
 	public String toString()
 	{
 		return this.gameLabel;
+	}
+	
+	protected String getPlayerFromID( Integer playerID )
+	{
+		String retval = "";
+		String query = "SELECT * FROM player WHERE id = '" + playerID + "'";
+		ResultSet results = Database.runQuery( query );
+		
+		try
+		{
+			if( results.next() )
+			{
+				retval = results.getString("fullName");
+				
+			}
+		} catch (SQLException e)
+		{
+			Logger.log(e.toString());
+		}
+		
+		return retval;
 	}
 }
