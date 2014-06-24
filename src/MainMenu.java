@@ -12,7 +12,6 @@ import java.util.ArrayList;
 
 public class MainMenu extends ScreenParent {
 
-	
 	protected int gameID; // this will be the "Jeopardy Archive ID" i.e. jarchiveID in the game table
 	protected Integer lastGamePlayedID = 0; // Likewise
 	protected Integer nextGameToBePlayedID = 0;
@@ -187,18 +186,33 @@ public class MainMenu extends ScreenParent {
 		this.initGameList();
 		
 		// This is the list containing the first X games to use 
-		// Will need to contain at least a string to represent the game, as well as a gameID
-		
-		DefaultListModel model = new DefaultListModel();
+		// Each element of the model will be a GameInfo, hence it is that type
+		// GameInfo has a custom toString method so that JList can easily display it
+		DefaultListModel<GameInfo> model = new DefaultListModel<GameInfo>();
 		for( int i = 0; i < this.gameList.size() ; i ++)
 		{
 			model.addElement( this.gameList.get(i) );
 			Logger.log("Successfully added a gameID");
 		}
 		
-		//JList<Object> list = new JList<>( this.gameList.toArray() );
-
-		JList<Object> list = new JList<>( model );
+		JList<GameInfo> list = new JList<GameInfo>( model );
+		
+		@SuppressWarnings("serial")
+		// An action to handle any enters or doubleclicks on the JList 
+		Action launchGameAction = new AbstractAction()
+		{
+		    public void actionPerformed(ActionEvent e)
+		    {
+		        JList<GameInfo> actionList = (JList<GameInfo>) e.getSource();
+		        
+		        // Grab the GameInfo object clicked on
+		        GameInfo tmp = (GameInfo) actionList.getSelectedValue();
+		        // then try and start that game!
+		        MainMenu.this.controller.attemptToStartGame( tmp.jArchiveID );
+		    }
+		};
+		
+		ListAction la = new ListAction(list, launchGameAction);
 		list.setSelectionMode( ListSelectionModel.SINGLE_SELECTION );
 		list.setSelectedIndex( 0 );
 		    
